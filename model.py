@@ -1,5 +1,9 @@
 import torch.nn as nn
 import torch.nn.functional as F
+import torch
+from thop import profile
+from thop import clever_format
+from torchsummary import summary
 
 # 65%
 # define your own model
@@ -47,11 +51,6 @@ class Net(nn.Module):
         return x
 
 
-import torch
-import torch.nn as nn
-from thop import profile
-from thop import clever_format
-
 def my_hook_function(self, input, output):
 
     print("{:20}".format(str(self.__class__.__name__)), end="")
@@ -69,8 +68,6 @@ def my_hook_function(self, input, output):
     print("{:>10}".format(params))
 
 
-
-from torchsummary import summary
 
 if __name__ == '__main__':
 
