@@ -53,7 +53,10 @@ class Net(nn.Module):
 
 def my_hook_function(self, input, output):
 
-    print("{:20}".format(str(self.__class__.__name__)), end="")
+    global total_params, total_macs
+
+    op_type = str(self.__class__.__name__)
+    print("{:20}".format(op_type), end="")
     print("{:<20}{:<20}".format(str(list(input[0].size())), str(list(output.size()))), end="")
 
     params = 0
@@ -65,27 +68,67 @@ def my_hook_function(self, input, output):
 
         params += tmp
 
-    print("{:>10}".format(params))
+    print("{:>10}".format(params), end="")
+    total_params += params
+
+
+    if(op_type == "Conv2d"):
+
+        out_c = (list(self.parameters())[0].size())[0]
+        in_c = (list(self.parameters())[0].size())[1]
+        kermel_w = (list(self.parameters())[0].size())[2]
+        kermel_h = (list(self.parameters())[0].size())[3]
+        out_w = list(output.size())[2]
+        out_h = list(output.size())[3]
+        macs = kermel_h * kermel_w * in_c * out_h * out_w*out_c
+        print("{:>15}".format(macs))
+        total_macs += macs
+
+    elif(op_type == "Linear"):
+
+        in_shape = list(input[0].size())[1]
+        out_shape = list(output.size())[1]
+        macs = in_shape * out_shape
+        print("{:>15}".format(macs))
+        total_macs += macs
+
+    else:
+        print("{:>15}".format(0))
+
+
 
 
 
 if __name__ == '__main__':
 
+    total_params = 0
+    total_macs = 0
+
     model = Net()
     for child in model.children():
         child.register_forward_hook(my_hook_function)
 
-    print("{:20}{:20}{:20}{:>10}".format("op_type", "input_shape", "output_shape", "params"))
-    for i in range(70):
+    #op_type             input_shape         output_shape            params           macs
+    print("{:20}{:20}{:20}{:>10}{:>15}".format("op_type", "input_shape", "output_shape", "params", "macs"))
+    # -------------------------------------------------------------------------------------
+    for i in range(85):
         print("-", end="")
     print("")
 
     input_data = torch.randn(1, 3, 224, 224)
     out = model(input_data)
 
-    '''
+    # -------------------------------------------------------------------------------------
+    for i in range(85):
+        print("-", end="")
+    print("")
+
+    print("Total params: {:>10}".format(total_params))
+    print("Total MACs:   {:>10}".format(total_macs))
+
+
     macs, params = profile(model, inputs=(input_data,), verbose=False)
-    macs, params = clever_format([macs, params], "%.3f")
-    print("Total MACs: " + macs, "\nTotal params: " + params)
-    summary(model.cuda(), (3, 224, 224))
-    '''
+    #macs, params = clever_format([macs, params], "%.3f")
+    print("Total params: " + str(params), "\nTotal MACs: " + str(macs))
+    #summary(model.cuda(), (3, 224, 224))
+
