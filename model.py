@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch.nn.functional as F
 
 # 65%
 # define your own model
@@ -6,40 +7,43 @@ class Net(nn.Module):
 
     # define the layers
     def __init__(self):
+
         super(Net, self).__init__()
 
-        self.flatten = nn.Flatten()
-        self.convolution = nn.Sequential(
+        self.conv1 = nn.Conv2d(3, 16, 3)
+        self.pool1 = nn.MaxPool2d(2)
 
-            nn.Conv2d(3, 16, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
+        self.conv2 = nn.Conv2d(16, 32, 3)
+        self.pool2 = nn.MaxPool2d(2)
 
-            nn.Conv2d(16, 32, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
+        self.conv3 = nn.Conv2d(32, 64, 3)
+        self.pool3 = nn.MaxPool2d(2)
 
-            nn.Conv2d(32, 64, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
+        self.conv4 = nn.Conv2d(64, 128, 3)
+        self.pool4 = nn.MaxPool2d(2)
 
-            nn.Conv2d(64, 128, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
+        self.drop = nn.Dropout(0.5)
+        self.fc1 = nn.Linear(128*12*12, 11)
 
-        )
-        self.linear_relu_stack = nn.Sequential(
-
-            nn.Dropout(p=0.5),
-            nn.Linear(128 * 12 * 12, 11)
-
-        )
 
     def forward(self, x):
-        x = self.convolution(x)
-        #print(x.shape)
-        x = self.flatten(x)
-        x = self.linear_relu_stack(x)
+
+        x = F.relu(self.conv1(x))
+        x = self.pool1(x)
+
+        x = F.relu(self.conv2(x))
+        x = self.pool2(x)
+
+        x = F.relu(self.conv3(x))
+        x = self.pool3(x)
+
+        x = F.relu(self.conv4(x))
+        x = self.pool4(x)
+
+        x = x.view(-1, 128*12*12)
+        x = self.drop(x)
+        x = self.fc1(x)
+
         return x
 
 
@@ -54,15 +58,12 @@ def my_hook_function(self, input, output):
         print("params shape: {}".format(list(param.size())))
 
 
-
+from torchsummary import summary
 
 if __name__ == '__main__':
 
     model = Net()
-    model.convolution.register_forward_hook(my_hook_function)
-    model.flatten.register_forward_hook(my_hook_function)
-    model.linear_relu_stack.register_forward_hook(my_hook_function)
     input_data = torch.randn(1, 3, 224, 224)
     out = model(input_data)
 
-    flops, params = profile(model, inputs=(input_data,))
+    summary(model.cuda(), (3, 224, 224))
