@@ -50,12 +50,24 @@ class Net(nn.Module):
 import torch
 import torch.nn as nn
 from thop import profile
+from thop import clever_format
 
 def my_hook_function(self, input, output):
 
-    print("Op:{}".format(str(self.__class__.__name__)))
+    print("{:20}".format(str(self.__class__.__name__)), end="")
+    print("{:<20}{:<20}".format(str(list(input[0].size())), str(list(output.size()))), end="")
+
+    params = 0
     for param in self.parameters():
-        print("params shape: {}".format(list(param.size())))
+        #print("params shape: {}".format(list(param.size())))
+        tmp = 1
+        for i in list(param.size()):
+            tmp *= i
+
+        params += tmp
+
+    print("{:>10}".format(params))
+
 
 
 from torchsummary import summary
@@ -63,7 +75,20 @@ from torchsummary import summary
 if __name__ == '__main__':
 
     model = Net()
+    for child in model.children():
+        child.register_forward_hook(my_hook_function)
+
+    print("{:20}{:20}{:20}{:>10}".format("op_type", "input_shape", "output_shape", "params"))
+    for i in range(70):
+        print("-", end="")
+    print("")
+
     input_data = torch.randn(1, 3, 224, 224)
     out = model(input_data)
 
+    '''
+    macs, params = profile(model, inputs=(input_data,), verbose=False)
+    macs, params = clever_format([macs, params], "%.3f")
+    print("Total MACs: " + macs, "\nTotal params: " + params)
     summary(model.cuda(), (3, 224, 224))
+    '''
