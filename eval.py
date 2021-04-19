@@ -36,7 +36,8 @@ if __name__ == '__main__':
                 class_correct[labels[i]] += predicted[i].eq(labels[i]).item()
 
     for i in range(11):
-        print('Accuracy of class %d is %.2f' % (i, (100 * class_correct[i] / class_total[i])))
+        print('Accuracy of class %2d is %3d/%3d  %.2f%%' % (
+        i, class_correct[i], class_total[i], (100 * class_correct[i] / class_total[i])))
 
-    print('Accuracy of the network on the %d test images: %.2f %%'
-          % (sum(class_total), (100 * sum(class_correct) / sum(class_total))))
+    print('Accuracy of the network on the %d test images: %d/%d  %.2f %%'
+          % (sum(class_total), sum(class_correct), sum(class_total), (100 * sum(class_correct) / sum(class_total))))
