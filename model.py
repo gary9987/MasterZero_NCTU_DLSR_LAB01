@@ -45,12 +45,14 @@ class Net(nn.Module):
 
 import torch
 import torch.nn as nn
-
+from thop import profile
 
 def my_hook_function(self, input, output):
+
     print("Op:{}".format(str(self.__class__.__name__)))
     for param in self.parameters():
         print("params shape: {}".format(list(param.size())))
+
 
 
 
@@ -62,3 +64,5 @@ if __name__ == '__main__':
     model.linear_relu_stack.register_forward_hook(my_hook_function)
     input_data = torch.randn(1, 3, 224, 224)
     out = model(input_data)
+
+    flops, params = profile(model, inputs=(input_data,))
