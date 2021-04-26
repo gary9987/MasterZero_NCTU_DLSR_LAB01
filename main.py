@@ -34,7 +34,7 @@ if __name__ == '__main__':
                              [0.229, 0.224, 0.225])
     ])
 
-    # The transform function for test data
+    # The transform function for validation and evaluation data
     transform_test = transforms.Compose([
         transforms.Resize(255),
         transforms.CenterCrop(224),

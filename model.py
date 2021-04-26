@@ -130,8 +130,8 @@ if __name__ == '__main__':
     print("Total MACs:   {:>10}".format(total_macs))
 
 
-    macs, params = profile(model, inputs=(input_data,), verbose=False)
+    #macs, params = profile(model, inputs=(input_data,), verbose=False)
     #macs, params = clever_format([macs, params], "%.3f")
-    print("Total params: " + str(params), "\nTotal MACs: " + str(macs))
+    #print("Total params: " + str(params), "\nTotal MACs: " + str(macs))
     #summary(model.cuda(), (3, 224, 224))
 
