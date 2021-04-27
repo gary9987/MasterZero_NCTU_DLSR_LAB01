@@ -12,19 +12,16 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         self.conv1 = nn.Conv2d(3, 16, 3)
-        self.pool1 = nn.MaxPool2d(2)
+        self.pool = nn.MaxPool2d(2)
         self.batchNorm1 = nn.BatchNorm2d(16)
 
         self.conv2 = nn.Conv2d(16, 32, 3)
-        self.pool2 = nn.MaxPool2d(2)
         self.batchNorm2 = nn.BatchNorm2d(32)
 
         self.conv3 = nn.Conv2d(32, 64, 3)
-        self.pool3 = nn.MaxPool2d(2)
         self.batchNorm3 = nn.BatchNorm2d(64)
 
         self.conv4 = nn.Conv2d(64, 128, 3)
-        self.pool4 = nn.MaxPool2d(2)
         self.batchNorm4 = nn.BatchNorm2d(128)
 
         self.drop = nn.Dropout(0.5)
@@ -33,19 +30,19 @@ class Net(nn.Module):
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = self.batchNorm1(x)
-        x = self.pool1(x)
+        x = self.pool(x)
 
         x = F.relu(self.conv2(x))
         x = self.batchNorm2(x)
-        x = self.pool2(x)
+        x = self.pool(x)
 
         x = F.relu(self.conv3(x))
         x = self.batchNorm3(x)
-        x = self.pool3(x)
+        x = self.pool(x)
 
         x = F.relu(self.conv4(x))
         x = self.batchNorm4(x)
-        x = self.pool4(x)
+        x = self.pool(x)
 
         x = x.view(-1, 128 * 12 * 12)
         x = self.drop(x)
@@ -83,7 +80,7 @@ def my_hook_function(self, input, output):
         kermel_h = (list(self.parameters())[0].size())[3]
         out_w = list(output.size())[2]
         out_h = list(output.size())[3]
-        macs = kermel_h * kermel_w * in_c * out_h * out_w*out_c
+        macs = kermel_h * kermel_w * in_c * out_h * out_w * out_c
         print("{:>15}".format(macs))
         total_macs += macs
 
