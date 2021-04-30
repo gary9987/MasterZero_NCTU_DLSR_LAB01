@@ -213,6 +213,39 @@ optimizer = optim.Adam(net.parameters())
     print(evaluteTopK(3, net, evalloader))
 
     ```
+  - Top 1 accuracy
+    ```
+    Top 1 Accuracy of class  0 is 250/368  67.93%
+    Top 1 Accuracy of class  1 is  45/148  30.41%
+    Top 1 Accuracy of class  2 is 125/231  54.11%
+    Top 1 Accuracy of class  3 is 357/500  71.40%
+    Top 1 Accuracy of class  4 is 191/335  57.01%
+    Top 1 Accuracy of class  5 is 201/287  70.03%
+    Top 1 Accuracy of class  6 is 359/432  83.10%
+    Top 1 Accuracy of class  7 is 115/147  78.23%
+    Top 1 Accuracy of class  8 is  76/ 96  79.17%
+    Top 1 Accuracy of class  9 is 219/303  72.28%
+    Top 1 Accuracy of class 10 is 450/500  90.00%
+    Top 1 accuracy of the network on the 3347 test images: 2388/3347  71.35 %
+    71.34747535106065
+    ```
+  - Top 3 accuracy
+    ```
+    Top 3 Accuracy of class  0 is 342/368  92.93%
+    Top 3 Accuracy of class  1 is  89/148  60.14%
+    Top 3 Accuracy of class  2 is 184/231  79.65%
+    Top 3 Accuracy of class  3 is 484/500  96.80%
+    Top 3 Accuracy of class  4 is 298/335  88.96%
+    Top 3 Accuracy of class  5 is 260/287  90.59%
+    Top 3 Accuracy of class  6 is 419/432  96.99%
+    Top 3 Accuracy of class  7 is 136/147  92.52%
+    Top 3 Accuracy of class  8 is  90/ 96  93.75%
+    Top 3 Accuracy of class  9 is 278/303  91.75%
+    Top 3 Accuracy of class 10 is 485/500  97.00%
+    Top 3 accuracy of the network on the 3347 test images: 3065/3347  91.57 %
+    91.57454436809083
+    ```
+    
 ## Reference
 - [formula-to-compute-the-number-of-macs-in-a-convolutional-neural-network](https://stackoverflow.com/questions/56138754/formula-to-compute-the-number-of-macs-in-a-convolutional-neural-network)
 - [Pytorch详解NLLLoss和CrossEntropyLoss](https://blog.csdn.net/qq_22210253/article/details/85229988)
